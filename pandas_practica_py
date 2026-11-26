@@ -1,0 +1,377 @@
+#import pandas as pd
+
+#ruta = "https://github.com/VMjavier/BootcampIA/raw/refs/heads/main/conjunto_datos.csv"
+#df = pd.read_csv(ruta)
+#print(df.head())
+
+import pandas as pd
+
+ruta = "https://raw.githubusercontent.com/VMjavier/claseAnalisisDatos/refs/heads/main/veterinaria_colombia.csv"
+
+df = pd.read_csv(ruta)
+df.head()
+
+print("="*70)
+print(" Muestra la información del tipo de dato")
+print("-"*70)
+print(df.info())
+print("-"*70)
+print("="*70)
+
+df.info()
+
+df.columns
+
+df.isnull().sum()
+
+df.shape #filas columnas
+
+df['Raza']
+
+df[['Raza', 'Especie']]
+
+df[df['Raza'] == 'Criollo']
+
+#df[df['color_intensity'].between(2,3)]
+#consulta = df[df['target'] == 0]
+#consulta.to_excel("vino tipo 0.xlsx", index=False)
+
+import pandas as pd
+
+ruta = "https://raw.githubusercontent.com/VMjavier/claseAnalisisDatos/refs/heads/main/veterinaria_colombia.csv"
+
+df = pd.read_csv(ruta)
+df.head()
+
+df.info()
+
+df.columns
+
+df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_')
+
+df.columns
+
+df.rename(columns = {"nombre": "nombre_mascota"}, inplace = True)
+
+df.columns
+
+df.dropna(axis = 0, how = "all", inplace = True) # Fila = 0
+df.dropna(axis = 1, how = "all", inplace = True) # Columna = 1
+
+df.shape #(filas, columnas)
+
+df["nombre_mascota"]
+
+df.drop(columns = ["nombre_mascota"], inplace = True)
+
+df.columns
+
+df.head(3)
+
+df["edad"] = df["edad"].str.extract('(\d+\.?\d*)')
+df["peso_kg"] = df["peso_kg"].str.extract('(\d+\.?\d*)')
+df["temperatura_c"] = df["temperatura_c"].str.extract('(\d+\.?\d*)')
+df["frec_cardiaca"] = df["frec_cardiaca"].str.extract('(\d+\.?\d*)')
+df["frec_respiratoria"] = df["frec_respiratoria"].str.extract('(\d+\.?\d*)')
+df["costo_consulta"] = df["costo_consulta"].str.extract('(\d+\.?\d*)')
+
+df.head(3)
+
+df.info()
+
+df["edad"] = pd.to_numeric(df["edad"], errors = "coerce")
+df["peso_kg"] = pd.to_numeric(df["peso_kg"], errors = "coerce")
+df["temperatura_c"] = pd.to_numeric(df["temperatura_c"], errors = "coerce")
+df["frec_cardiaca"] = pd.to_numeric(df["frec_cardiaca"], errors = "coerce")
+df["frec_respiratoria"] = pd.to_numeric(df["frec_respiratoria"], errors = "coerce")
+df["costo_consulta"] = pd.to_numeric(df["costo_consulta"], errors = "coerce")
+df.info()
+
+df.head()
+
+df.drop_duplicates(inplace = True)
+
+df.shape
+
+df.isnull().sum()
+
+df["raza"].fillna("No registra", inplace = True)
+df["especie"].fillna("Sin especie", inplace = True)
+df["id_mascota"].fillna("Sin ID", inplace = True)
+
+df.isnull().sum()
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(8,5))
+
+sns.set_style("whitegrid") # activa cuadrícula
+sns.histplot(
+    df["edad"],
+    kde=True,
+    color="#62109F", # color solicitado
+    alpha=0.7
+)
+plt.title("Distribución de edad", fontsize=16)
+plt.xlabel("edad")
+plt.ylabel("Frecuencia")
+plt.show()
+
+import seaborn as sns
+
+sns.boxplot(df["edad"], color="#62109F")
+plt.title("Bloxplot edad", fontsize=16)
+plt.show()
+
+df.isnull().sum()
+
+#mean = Promedio = media
+#median = mediana
+media = df["edad"].mean()
+mediana = df["edad"].median()
+print(f"Media={media}")
+print(f"Mediana={mediana}")
+
+df['edad'].fillna(mediana, inplace = True)
+
+df.isnull().sum()
+
+#Completar datos con el promedio o media
+mediana = df["edad"].median()
+df['edad'].fillna(mediana, inplace = True)
+mediana = df["peso_kg"].median()
+df['peso_kg'].fillna(mediana, inplace = True)
+mediana = df["temperatura_c"].median()
+df['temperatura_c'].fillna(mediana, inplace = True)
+mediana = df["frec_cardiaca"].median()
+df['frec_cardiaca'].fillna(mediana, inplace = True)
+mediana = df["frec_respiratoria"].median()
+df['frec_respiratoria'].fillna(mediana, inplace = True)
+mediana = df["costo_consulta"].median()
+df['costo_consulta'].fillna(mediana, inplace = True)
+
+df.isnull().sum()
+
+import pandas as pd
+
+df.to_excel("mascotas_limpio.xlsx", index=False)
+df.to_csv("mascotas_limpio.csv", index=False)
+
+import pandas as pd
+
+ruta = "mascotas_limpio.csv"
+
+df = pd.read_csv(ruta)
+df.head()
+
+consulta_doctora = df[['raza', 'peso_kg', 'temperatura_c']]
+consulta_doctora.to_excel("consulta_doctora_Juguete.xlsx", index=False)
+
+df[df["peso_kg"] < 5]
+
+df[df["especie"] == "Perro"]
+
+df[df["raza"].isin(["Siames", "Persa"])]
+
+df["raza"].unique()
+
+#100 y 120
+df[df["frec_cardiaca"].between(100,120)] #para intervalos numéricos
+
+df[["raza", "especie", "peso_kg"]][df["frec_cardiaca"].between(100,120)]
+
+df["especie"].value_counts()
+
+resultado = df.groupby('especie').agg(
+    razas=('raza', 'unique'), # Lista de razas por especie
+    total_costo=('costo_consulta', 'sum') # Suma total de costos por especie
+).reset_index()
+
+# Mostrar el resultado
+print(resultado)
+
+# Agrupar por 'especie' y 'raza' y mostrar los resultados en formato tabular
+resultado = df[['especie', 'raza']].drop_duplicates().reset_index(drop=True)
+
+# Mostrar el resultado
+print(resultado)
+
+resultado = (
+    df[['especie', 'raza']]
+    .drop_duplicates()
+    .sort_values(['especie', 'raza'])
+    .reset_index(drop=True)
+)
+print(resultado)
+
+import pandas as pd
+
+path = "https://github.com/VMjavier/claseAnalisisDatos/raw/refs/heads/main/conjunto_datos.csv"
+
+df = pd.read_csv(path)
+df.head(10)
+
+df.isnull().sum()
+
+df.columns
+
+df.sort_values(["País", "Año"])
+df.groupby("País")["Año"].transform(lambda x: x.interpolate(method='linear'))
+
+df["País"].fillna("Sin País", inplace = True)
+
+df = df[df["País"] != "Sin País"]
+
+df[df.duplicated(subset=["País", "Año"], keep=False)]
+
+df["País"].unique()
+
+df["Año"] = df["Año"].astype("Int64")
+df = df.sort_values(["País", "Año"])
+
+df["Año"] = (
+    df.groupby("País")["Año"]
+    .transform(lambda x: x.interpolate(method="linear"))
+)
+
+df.isnull().sum()
+
+df["Año"] = pd.to_numeric(df["Año"], errors="coerce")
+df["Consumo_Energia_Fosil (GWh)"] = pd.to_numeric(df["Consumo_Energia_Fosil (GWh)"], errors="coerce")
+
+import matplotlib.pyplot as plt
+
+# PAÍS A GRAFICAR
+paises = ['Francia', 'Alemania', 'Dinamarca', 'Países Bajos', 'Portugal', 'Italia', 'Reino Unido', 'España', 'Noruega', 'Suecia']
+pais = paises[0] # Cambia este nombre al país que quieras
+
+# FILTRO DEL DATAFRAME
+df_pais = df[df["País"] == pais].sort_values("Año")
+
+# GRÁFICO DE LINEAS
+plt.figure(figsize=(10,5))
+plt.plot(df_pais["Año"], df_pais["Consumo_Energia_Fosil (GWh)"], marker='o')
+plt.title(f"Consumo de Energía Fósil en {pais} por Año")
+plt.xlabel("Año")
+plt.ylabel("Consumo (GWh)")
+plt.grid(True)
+plt.show()
+
+import pandas as pd
+
+ruta = "https://github.com/VMjavier/BootcampIA/raw/refs/heads/main/mascotas_limpio%20(1).csv"
+
+df = pd.read_csv(ruta)
+df.head(3)#
+
+df.tail(3) #esto sirve para ver los últimos
+
+df.info()
+
+df.isnull().sum()
+
+df.describe().round(1)
+#count (contar frecuencia)
+#mean (promedio=media)
+#std(desviación estandar)
+#min(mínimo)
+#50%(mediana)
+#max(máximo)
+
+df.describe(include=object)
+
+df["edad"] = df["edad"].astype(int)
+
+df.info()
+
+df["frec_cardiaca"] = df["frec_cardiaca"].astype(int)
+df["frec_respiratoria"] = df["frec_respiratoria"].astype(int)
+df.info()
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+import plotly.express as px
+
+import pandas as pd
+
+ruta = "https://github.com/VMjavier/BootcampIA/raw/refs/heads/main/mascotas_limpio%20(1).csv"
+
+df = pd.read_csv(ruta)
+df.head(3)#
+
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Obtener los datos de especie
+conteo_especies = df['especie'].value_counts()
+etiquetas = conteo_especies.index.tolist() # ['Perro', 'Gato']
+valores = conteo_especies.values.tolist() # [2, 1] (según tus datos)
+
+# Versión adaptada para especie
+plt.figure(figsize=(8, 5))
+barras = plt.bar(
+    etiquetas, # Eje x (especies)
+    valores, # Eje y (conteos)
+    width=0.6, # Ancho de las barras
+    color='#132440', # Color de las barras
+    edgecolor='#16476A', # Borde de las barras
+    linewidth=1.5, # Grosor del borde
+    align='center', # Alineación
+    alpha=0.8, # Transparencia
+    hatch='/', # Patrón
+    zorder=3 # Orden en el eje Z
+)
+
+# Añadir etiquetas de valores sobre las barras
+for barra in barras:
+    altura = barra.get_height()
+    plt.text(barra.get_x() + barra.get_width()/2., altura + 0.1,
+             f'{int(altura)}',
+             ha='center', va='bottom',
+             fontsize=11, weight='bold')
+
+# Estilizar ejes y fondo
+plt.title('Distribución de Especies', fontsize=14, weight='bold', pad=20)
+plt.xlabel('Especies', fontsize=12)
+plt.ylabel('Cantidad de Mascotas', fontsize=12)
+plt.grid(True, axis='y', linestyle='--', alpha=0.7, zorder=0)
+plt.ylim(0, max(valores) + 0.5) # Un poco más alto para las etiquetas
+plt.xticks(fontsize=11)
+plt.yticks(fontsize=11)
+plt.gca().set_facecolor('#f5f5f5') # Color del fondo del área del gráfico
+
+# Opcional: Añadir un borde al gráfico
+plt.gca().spines['top'].set_visible(False)
+plt.gca().spines['right'].set_visible(False)
+
+plt.tight_layout()
+plt.show()
+
+import numpy as np
+import matplotlib.pyplot as plt
+np.random.seed(42)
+
+#datos
+x = df['temperatura_c']
+y = df['frec_cardiaca']
+
+#Gráfico
+plt.scatter(x, y, color = "#132440", marker='d')
+plt.title("Gráfico de dispersión")
+plt.xlabel("Temperatura")
+plt.ylabel("Frecuencia Cardiaca")
+plt.grid(True, axis='y', linestyle='--', alpha=0.7, zorder=0)
+plt.gca().set_facecolor('#f5f5f5') # Color del fondo del área del gráfico
+plt.show()
+
+from sklearn.datasets import load_wine
+import pandas as pd
+
+# Cargar el dataset directamente como un DataFrame
+vino = load_wine(as_frame=True)
+df = vino.frame
+
+print(df.head())
+
+df.to_excel("vino.xlsx", index=False)
